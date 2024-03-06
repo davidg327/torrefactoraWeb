@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {useDispatch, useSelector} from "react-redux";
-import {getTasks} from "../state/task/reducer";
+import {deleteTask, getTasks} from "../state/task/reducer";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModeIcon from '@mui/icons-material/Mode';
 import {Button} from "@mui/material";
@@ -31,6 +31,13 @@ const Tasks = () => {
         dispatch(getPriorities());
         dispatch(getStatus());
     }, []);
+
+    const handleDelete = (values) => {
+        let body = {
+            id: values
+        };
+        dispatch(deleteTask(body))
+    }
 
     return (
       <div>
@@ -65,9 +72,13 @@ const Tasks = () => {
                               <TableCell align="center">{row.duration}</TableCell>
                               <TableCell align="center">{row.priority.name}</TableCell>
                               <TableCell align="center">{row.status.name}</TableCell>
-                              <TableCell align="center">
-                                  <ModeIcon />
-                                  <DeleteIcon />
+                              <TableCell align="center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                  <div style={{marginRight: '10%'}}>
+                                      <ModeIcon />
+                                  </div>
+                                  <div onClick={() => handleDelete(row.id)}>
+                                      <DeleteIcon />
+                                  </div>
                               </TableCell>
                           </TableRow>
                       ))}

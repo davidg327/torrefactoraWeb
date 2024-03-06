@@ -5,9 +5,12 @@ const initialState = {
     getTasksSuccess: false,
     getTasksError: '',
     tasks: [],
-    createTaskRequesting: true,
+    createTaskRequesting: false,
     createTaskSuccess: false,
     createTaskError: '',
+    deleteTaskRequesting: false,
+    deleteTaskSuccess: false,
+    deleteTaskError: '',
 };
 
 export const tasksSlice = createSlice({
@@ -38,6 +41,19 @@ export const tasksSlice = createSlice({
             state.createTaskRequesting = false;
             state.createTaskError = action.payload;
         },
+        deleteTask: (state) => {
+            state.deleteTaskRequesting = true;
+        },
+        deleteTaskSuccess: (state, action) => {
+            console.log(action.payload);
+            state.deleteTaskRequesting = false;
+            state.deleteTaskSuccess = true;
+            state.tasks = state.tasks.filter(item => item.id !== action.payload.id);
+        },
+        deleteTaskFailure: (state, action) => {
+            state.deleteTaskRequesting = false;
+            state.deleteTaskError =  action.payload;
+        }
     },
 });
 
@@ -48,6 +64,9 @@ export const {
     createTask,
     createTaskSuccess,
     createTaskFailure,
+    deleteTask,
+    deleteTaskSuccess,
+    deleteTaskFailure,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;
