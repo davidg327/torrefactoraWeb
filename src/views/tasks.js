@@ -15,16 +15,21 @@ import './styles.css';
 import ModalForm from "./components/form";
 import {getPriorities} from "../state/priority/reducer";
 import {getStatus} from "../state/status/reducer";
+import ModalFormEdit from "./components/formEdit";
 
 const Tasks = () => {
 
     const dispatch = useDispatch();
 
+    const [focus, setFocus] = useState({});
     const {tasks} = useSelector(state => state.task);
 
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [open, setOpen] = useState('');
+
+    const handleClose = () => {
+        setOpen('');
+        setFocus({});
+    };
 
     useEffect(() => {
         dispatch(getTasks());
@@ -39,10 +44,15 @@ const Tasks = () => {
         dispatch(deleteTask(body))
     }
 
+    const openEdit = (values) => {
+        setOpen('edit');
+        setFocus(values);
+    };
+
     return (
       <div>
           <Button variant="contained"
-                  onClick={handleOpen}
+                  onClick={() => setOpen('create')}
                   color="primary" style={{margin: '2%'}}>Crear tarea</Button>
           <TableContainer component={Paper}>
               <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table" className="custom-table">
@@ -73,7 +83,8 @@ const Tasks = () => {
                               <TableCell align="center">{row.priority.name}</TableCell>
                               <TableCell align="center">{row.status.name}</TableCell>
                               <TableCell align="center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                  <div style={{marginRight: '10%'}}>
+                                  <div style={{marginRight: '10%'}}
+                                        onClick={() => openEdit(row)}>
                                       <ModeIcon />
                                   </div>
                                   <div onClick={() => handleDelete(row.id)}>
@@ -85,7 +96,8 @@ const Tasks = () => {
                   </TableBody>
               </Table>
           </TableContainer>
-          <ModalForm visible={open} close={handleClose}/>
+          {open === 'create' && <ModalForm visible={open} close={handleClose} />}
+          {open === 'edit' && <ModalFormEdit visible={open} close={handleClose} focus={focus}/>}
       </div>
   )
 }

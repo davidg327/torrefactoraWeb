@@ -4,9 +4,9 @@ import { Button, Dialog, DialogContent,
     InputLabel, MenuItem, Select, TextField
 } from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
-import {createTask} from "../../state/task/reducer";
+import {updateTask} from "../../state/task/reducer";
 
-const ModalForm = ({visible, close}) => {
+const ModalFormEdit = ({visible, close, focus}) => {
 
     const dispatch = useDispatch();
 
@@ -31,7 +31,17 @@ const ModalForm = ({visible, close}) => {
     };
 
     const handleSubmit = () => {
-        dispatch(createTask(formData));
+        let values = {
+            id: focus.id,
+            name: formData.name !== '' ? formData.name : focus.name,
+            description: formData.description !== '' ? formData.description : focus.description,
+            beginDate: formData.beginDate !== '' ? formData.beginDate : focus.beginDate,
+            endDate: formData.endDate !== '' ? formData.endDate : focus.endDate,
+            duration: formData.duration !== '' ? formData.duration : focus.duration,
+            priorityId: formData.priorityId !== '' ? formData.priorityId : focus.priority.id,
+            statusId: formData.statusId !== '' ? formData.statusId : focus.status.id,
+        }
+        dispatch(updateTask(values));
         setFormData({ name: '', description: '', beginDate: '', endDate: '', duration: '', priorityId: '', statusId: '' });
         close();
     };
@@ -44,7 +54,8 @@ const ModalForm = ({visible, close}) => {
                     <TextField
                         label="Nombre"
                         name="name"
-                        value={formData.name}
+                        defaultValue={focus.name}
+                        value={formData.name !== '' ? formData.name : focus.name}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -52,7 +63,8 @@ const ModalForm = ({visible, close}) => {
                     <TextField
                         label="Descripción"
                         name="description"
-                        value={formData.description}
+                        defaultValue={focus.description}
+                        value={formData.description !== '' ? formData.description : focus.description}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -63,7 +75,8 @@ const ModalForm = ({visible, close}) => {
                                 label="Fecha de Inicio"
                                 name="beginDate"
                                 type="date"
-                                value={formData.beginDate}
+                                defaultValue={focus.beginDate}
+                                value={formData.beginDate !== '' ? formData.beginDate : focus.beginDate}
                                 onChange={handleChange}
                                 fullWidth
                                 margin="normal"
@@ -74,7 +87,8 @@ const ModalForm = ({visible, close}) => {
                                 label="Fecha de Fin"
                                 name="endDate"
                                 type="date"
-                                value={formData.endDate}
+                                defaultValue={focus.endDate}
+                                value={formData.endDate !== '' ? formData.endDate : focus.endDate}
                                 onChange={handleChange}
                                 fullWidth
                                 margin="normal"
@@ -84,7 +98,8 @@ const ModalForm = ({visible, close}) => {
                     <TextField
                         label="Duración"
                         name="duration"
-                        value={formData.duration}
+                        defaultValue={focus.duration}
+                        value={formData.duration !== '' ? formData.duration : focus.duration}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -94,10 +109,15 @@ const ModalForm = ({visible, close}) => {
                         labelId="select-label"
                         onChange={handleChange}
                         name={'priorityId'}
+                        defaultValue={focus.priority.id}
                         fullWidth
                     >
                         {priorities.length > 0 && priorities.map((priority) => (
-                            <MenuItem key={priority.id} value={priority.id}>{priority.name}</MenuItem>
+                            <MenuItem
+                                key={priority.id}
+                                value={priority.id}
+                                defaultValue={focus.duration}
+                            >{priority.name}</MenuItem>
                         ))}
                     </Select>
                     <InputLabel id="select-label-status">Selecciona un status</InputLabel>
@@ -105,6 +125,7 @@ const ModalForm = ({visible, close}) => {
                         labelId="select-label"
                         onChange={handleChange}
                         name={'statusId'}
+                        defaultValue={focus.status.id}
                         fullWidth
                     >
                         {status.length > 0 && status.map((status) => (
@@ -118,7 +139,7 @@ const ModalForm = ({visible, close}) => {
                             <Button onClick={close}>Cerrar</Button>
                         </Grid>
                         <Grid item>
-                            <Button variant="contained" color="primary" onClick={handleSubmit}>Crear</Button>
+                            <Button variant="contained" color="primary" onClick={handleSubmit}>Actualizar</Button>
                         </Grid>
                     </Grid>
                 </DialogActions>
@@ -127,4 +148,4 @@ const ModalForm = ({visible, close}) => {
     )
 };
 
-export default ModalForm;
+export default ModalFormEdit;

@@ -7,7 +7,7 @@ import {
     deleteTaskFailure,
     getTasks,
     getTasksFailure,
-    getTasksSuccess, deleteTask
+    getTasksSuccess, deleteTask, updateTaskSuccess, updateTaskFailure, updateTask
 } from "./reducer";
 
 const getTasksAPI = () => {
@@ -96,11 +96,41 @@ function* deleteTaskFlow(action){
     }
 }
 
+const updateTaskAPI = (values) => {
+    return fetch(`http://localhost:4000/api/tasks/update`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+    })
+        .then(response => response.json())
+        .then(json => {
+            if (json?.id) {
+                return json;
+            }
+        })
+        .catch(error => {
+            throw error;
+        });
+};
+
+function* updateTaskFlow(action){
+    try {
+        const task = yield call(updateTaskAPI, action.payload);
+        yield put(updateTaskSuccess(task));
+    } catch (error) {
+        yield put(updateTaskFailure(error));
+    }
+}
+
 function* tasksWatcher() {
     yield all([
         takeEvery(getTasks.type, getTasksFlow),
         takeEvery(createTask.type, createTaskFlow),
         takeEvery(deleteTask.type, deleteTaskFlow),
+        takeEvery(updateTask.type, updateTaskFlow)
     ]);
 }
 
