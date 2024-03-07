@@ -16,15 +16,17 @@ import ModalForm from "./components/form";
 import {getPriorities} from "../state/priority/reducer";
 import {getStatus} from "../state/status/reducer";
 import ModalFormEdit from "./components/formEdit";
+import {shortestJobFirst} from "../function/shortestJobFirst";
 
 const Tasks = () => {
 
     const dispatch = useDispatch();
 
     const [focus, setFocus] = useState({});
-    const {tasks} = useSelector(state => state.task);
+    const {tasks, getTasksSuccess} = useSelector(state => state.task);
 
     const [open, setOpen] = useState('');
+    const [newArray, setNewArray] = useState([]);
 
     const handleClose = () => {
         setOpen('');
@@ -36,6 +38,13 @@ const Tasks = () => {
         dispatch(getPriorities());
         dispatch(getStatus());
     }, []);
+
+    useEffect(() => {
+
+        if(tasks.length > 0 && getTasksSuccess){
+           setNewArray(shortestJobFirst(tasks));
+        }
+    }, [tasks]);
 
     const handleDelete = (values) => {
         let body = {
@@ -69,7 +78,7 @@ const Tasks = () => {
                       </TableRow>
                   </TableHead>
                   <TableBody>
-                      {tasks.map((row) => (
+                      {newArray.length > 0 && newArray.map((row) => (
                           <TableRow
                               key={row.id}
                           >
@@ -84,7 +93,7 @@ const Tasks = () => {
                               <TableCell align="center">{row.status.name}</TableCell>
                               <TableCell align="center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                   <div style={{marginRight: '10%'}}
-                                        onClick={() => openEdit(row)}>
+                                       onClick={() => openEdit(row)}>
                                       <ModeIcon />
                                   </div>
                                   <div onClick={() => handleDelete(row.id)}>

@@ -23,6 +23,7 @@ const getTasksAPI = () => {
             if (json.length > 0) {
                 return json;
             }
+            throw json;
         })
         .catch(error => {
             throw error;

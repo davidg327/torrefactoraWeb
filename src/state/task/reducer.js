@@ -22,6 +22,7 @@ export const tasksSlice = createSlice({
     reducers: {
         getTasks: state => {
             state.getTasksRequesting = true;
+            state.tasks = [];
         },
         getTasksSuccess: (state, action) => {
             state.getTasksRequesting = false;
@@ -30,6 +31,7 @@ export const tasksSlice = createSlice({
         },
         getTasksFailure: (state, action) => {
             state.getTasksRequesting = false;
+            state.tasks = [];
             state.getTasksError = action.payload;
         },
         createTask: (state) => {
